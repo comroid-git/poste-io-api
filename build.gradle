@@ -56,23 +56,23 @@ task javadocJar(type: Jar) {
 compileJava.options.encoding = 'UTF-8'
 
 repositories {
+    maven { url 'https://maven.comroid.org' }
     mavenLocal()
-    maven {
-        url "https://maven.jetbrains.space/comroid/release"
-        credentials.username "Anonymous.User"
-        credentials.password "anonymous"
-    }
-    maven {
-        url "https://maven.jetbrains.space/comroid/repo"
-        credentials.username "Anonymous.User"
-        credentials.password "anonymous"
-    }
     jcenter()
-    maven { url 'https://www.jitpack.io' }
 }
 
 dependencies {
     api 'org.jetbrains:annotations:20.1.0'
+
+    if (isAutoDeploy) {
+        implementation ''
+    }
+
+    if (isAutoDeploy) {
+        implementation 'org.comroid:restless:0.+'
+    } else {
+        implementation project(':guardian:restless')
+    }
 
     // logging dependencies
     implementation 'org.apache.logging.log4j:log4j-api:2.11.0'
