@@ -65,10 +65,6 @@ dependencies {
     api 'org.jetbrains:annotations:20.1.0'
 
     if (isAutoDeploy) {
-        implementation ''
-    }
-
-    if (isAutoDeploy) {
         implementation 'org.comroid:restless:0.+'
     } else {
         implementation project(':guardian:restless')
