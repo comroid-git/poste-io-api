@@ -1,7 +1,6 @@
 package org.comroid.poste.entity;
 
 import org.comroid.api.ContextualProvider;
-import org.comroid.common.io.FileHandle;
 import org.comroid.mail.EMailAddress;
 import org.comroid.mutatio.model.Ref;
 import org.comroid.uniform.node.UniObjectNode;
@@ -39,11 +38,6 @@ public final class Inbox extends PosteEntity {
     public static final VarBind<Inbox, String, String, String> PASSWORD_PLAINTEXT
             = Type.createBind("passwordPlaintext")
             .extractAs(StandardValueType.STRING)
-            .build();
-    public static final VarBind<Inbox, String, FileHandle, FileHandle> HOME
-            = Type.createBind("home")
-            .extractAs(StandardValueType.STRING)
-            .andRemap(FileHandle::new)
             .build();
     public static final VarBind<Inbox, String, Instant, Instant> CREATED
             = Type.createBind("created")
@@ -94,9 +88,6 @@ public final class Inbox extends PosteEntity {
     public final Ref<String> domain = getComputedReference(DOMAIN);
     public final Ref<String> password = getComputedReference(PASSWORD);
     public final Ref<String> passwordPlaintext = getComputedReference(PASSWORD_PLAINTEXT);
-    public final Ref<FileHandle> home = getComputedReference(HOME);
-    public final Ref<Instant> created = getComputedReference(CREATED);
-    public final Ref<Instant> updated = getComputedReference(UPDATED);
     public final Ref<String> accountName = getComputedReference(NAME);
     public final Ref<Boolean> isDisabled = getComputedReference(IS_DISABLED);
     public final Ref<Boolean> isDomainAdmin = getComputedReference(IS_DOMAIN_ADMIN);
@@ -124,14 +115,6 @@ public final class Inbox extends PosteEntity {
 
     public @Nullable String getPasswordPlaintext() {
         return passwordPlaintext.get();
-    }
-
-    public Instant getCreatedTimestamp() {
-        return created.assertion("Creation Timestamp");
-    }
-
-    public @Nullable Instant getLastUpdatedTimestamp() {
-        return updated.get();
     }
 
     public @Nullable String getAccountName() {
