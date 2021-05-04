@@ -48,6 +48,10 @@ public abstract class PosteEntity extends DataContainerBase<PosteEntity> {
         return updated.get();
     }
 
+    public String getReferenceID() {
+        return referenceId.assertion("reference id");
+    }
+
     public PosteEntity(ContextualProvider context, @Nullable UniObjectNode initialData) {
         super(context, initialData);
     }
