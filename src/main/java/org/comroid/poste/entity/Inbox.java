@@ -1,6 +1,7 @@
 package org.comroid.poste.entity;
 
 import org.comroid.api.ContextualProvider;
+import org.comroid.api.Named;
 import org.comroid.mail.EMailAddress;
 import org.comroid.mutatio.model.Ref;
 import org.comroid.uniform.node.UniObjectNode;
@@ -15,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public final class Inbox extends PosteEntity {
+public final class Inbox extends PosteEntity implements Named {
     public static final GroupBind<Inbox> Type
             = PosteEntity.Type.subGroup("inbox");
     public static final VarBind<Inbox, String, EMailAddress, EMailAddress> ADDRESS
@@ -119,6 +120,11 @@ public final class Inbox extends PosteEntity {
 
     public @Nullable String getAccountName() {
         return accountName.get();
+    }
+
+    @Override
+    public String getName() {
+        return accountName.orElseGet(getEmailAddress()::toString);
     }
 
     public boolean isDisabled() {
