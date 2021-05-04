@@ -4,6 +4,9 @@ import org.comroid.api.ContextualProvider;
 import org.comroid.api.Named;
 import org.comroid.mail.EMailAddress;
 import org.comroid.mutatio.model.Ref;
+import org.comroid.poste.PosteIO;
+import org.comroid.poste.rest.EndpointScope;
+import org.comroid.restless.REST;
 import org.comroid.uniform.node.UniObjectNode;
 import org.comroid.util.StandardValueType;
 import org.comroid.varbind.bind.GroupBind;
@@ -14,6 +17,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class Inbox extends PosteEntity implements Named {
@@ -157,5 +161,11 @@ public final class Inbox extends PosteEntity implements Named {
 
     public Inbox(ContextualProvider context, UniObjectNode initialData) {
         super(context, initialData);
+    }
+
+    public CompletableFuture<Void> delete() {
+        return requireFromContext(PosteIO.class)
+                .request(REST.Method.DELETE, EndpointScope.MAILBOX_ID, getEmailAddress())
+                .thenApply(nil -> null);
     }
 }
