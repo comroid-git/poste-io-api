@@ -64,6 +64,20 @@ public final class PosteIO implements ContextualProvider.Underlying {
         this.entityCache = new DataContainerCache<>(context, 250, PosteEntity.REFERENCE_ID);
     }
 
+    public CompletableFuture<List<Domain>> requestDomains() {
+        return request(REST.Method.GET, EndpointScope.DOMAINS, obj -> obj.put("paging", Integer.MAX_VALUE))
+                .thenApply(response -> {
+                    assert response.get("last_page").asInt(-1) == response.get("page").asInt(-2) : "too many pages";
+
+                    List<Domain> yields = response.get("results").asArrayNode()
+                            .stream()
+                            .map(UniNode::asObjectNode)
+                            .flatMap(data -> entityCache.autoUpdate(Domain::new, data).stream())
+                            .collect(Collectors.toList());
+                    return Collections.unmodifiableList(yields);
+                });
+    }
+
     public CompletableFuture<List<Inbox>> requestInboxes() {
         return request(REST.Method.GET, EndpointScope.MAILBOXES, obj -> obj.put("paging", Integer.MAX_VALUE))
                 .thenApply(response -> {
