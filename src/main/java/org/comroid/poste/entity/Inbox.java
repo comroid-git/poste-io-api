@@ -4,12 +4,10 @@ import org.comroid.api.ContextualProvider;
 import org.comroid.common.io.FileHandle;
 import org.comroid.mail.EMailAddress;
 import org.comroid.mutatio.model.Ref;
-import org.comroid.poste.PosteIO;
 import org.comroid.uniform.node.UniObjectNode;
 import org.comroid.util.StandardValueType;
 import org.comroid.varbind.bind.GroupBind;
 import org.comroid.varbind.bind.VarBind;
-import org.comroid.varbind.container.DataContainerBase;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
@@ -18,9 +16,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public final class Inbox extends DataContainerBase<Inbox> {
+public final class Inbox extends PosteEntity {
     public static final GroupBind<Inbox> Type
-            = new GroupBind<>(PosteIO.CONTEXT, "inbox");
+            = PosteEntity.Type.subGroup("inbox");
     public static final VarBind<Inbox, String, EMailAddress, EMailAddress> ADDRESS
             = Type.createBind("address")
             .extractAs(StandardValueType.STRING)
@@ -77,10 +75,6 @@ public final class Inbox extends DataContainerBase<Inbox> {
             = Type.createBind("strict_from_disabled")
             .extractAs(StandardValueType.BOOLEAN)
             .build();
-    public static final VarBind<Inbox, String, String, String> REFERENCE_ID
-            = Type.createBind("reference_id")
-            .extractAs(StandardValueType.STRING)
-            .build();
     public static final VarBind<Inbox, Boolean, Boolean, Boolean> IS_REDIRECT_ONLY
             = Type.createBind("redirect_only")
             .extractAs(StandardValueType.BOOLEAN)
@@ -108,7 +102,6 @@ public final class Inbox extends DataContainerBase<Inbox> {
     public final Ref<Boolean> isDomainAdmin = getComputedReference(IS_DOMAIN_ADMIN);
     public final Ref<Boolean> isSuperAdmin = getComputedReference(IS_SUPER_ADMIN);
     public final Ref<Boolean> isStrictFromDisabled = getComputedReference(IS_STRICT_FROM_HEADER_DISABLED);
-    public final Ref<String> referenceId = getComputedReference(REFERENCE_ID);
     public final Ref<Boolean> isRedirectOnly = getComputedReference(IS_REDIRECT_ONLY);
     public final Ref<List<EMailAddress>> redirectTo = getComputedReference(REDIRECT_TO);
     public final Ref<Boolean> isDiscard = getComputedReference(IS_DISCARD);
