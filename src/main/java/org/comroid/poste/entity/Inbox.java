@@ -84,7 +84,7 @@ public final class Inbox extends DataContainerBase<Inbox> {
     public static final VarBind<Inbox, String, EMailAddress, ArrayList<EMailAddress>> REDIRECT_TO
             = Type.createBind("redirect_to")
             .extractAsArray(StandardValueType.STRING)
-            .andRemap(EMailAddress::new)
+            .andRemap(EMailAddress::parse)
             .intoCollection((Supplier<ArrayList<EMailAddress>>) ArrayList::new)
             .build();
     public static final VarBind<Inbox, Boolean, Boolean, Boolean> IS_DISCARD
