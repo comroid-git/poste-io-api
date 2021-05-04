@@ -3,15 +3,19 @@ package org.comroid.poste.entity;
 import org.comroid.api.ContextualProvider;
 import org.comroid.common.io.FileHandle;
 import org.comroid.mail.EMailAddress;
+import org.comroid.mutatio.model.Ref;
 import org.comroid.poste.PosteIO;
 import org.comroid.uniform.node.UniObjectNode;
 import org.comroid.util.StandardValueType;
 import org.comroid.varbind.bind.GroupBind;
 import org.comroid.varbind.bind.VarBind;
 import org.comroid.varbind.container.DataContainerBase;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 public final class Inbox extends DataContainerBase<Inbox> {
@@ -81,16 +85,93 @@ public final class Inbox extends DataContainerBase<Inbox> {
             = Type.createBind("redirect_only")
             .extractAs(StandardValueType.BOOLEAN)
             .build();
-    public static final VarBind<Inbox, String, EMailAddress, ArrayList<EMailAddress>> REDIRECT_TO
+    public static final VarBind<Inbox, String, EMailAddress, List<EMailAddress>> REDIRECT_TO
             = Type.createBind("redirect_to")
             .extractAsArray(StandardValueType.STRING)
             .andRemap(EMailAddress::parse)
-            .intoCollection((Supplier<ArrayList<EMailAddress>>) ArrayList::new)
+            .intoCollection((Supplier<List<EMailAddress>>) ArrayList::new)
             .build();
     public static final VarBind<Inbox, Boolean, Boolean, Boolean> IS_DISCARD
             = Type.createBind("discard")
             .extractAs(StandardValueType.BOOLEAN)
             .build();
+    public final Ref<EMailAddress> address = getComputedReference(ADDRESS);
+    public final Ref<String> user = getComputedReference(USER);
+    public final Ref<String> domain = getComputedReference(DOMAIN);
+    public final Ref<String> password = getComputedReference(PASSWORD);
+    public final Ref<String> passwordPlaintext = getComputedReference(PASSWORD_PLAINTEXT);
+    public final Ref<FileHandle> home = getComputedReference(HOME);
+    public final Ref<Instant> created = getComputedReference(CREATED);
+    public final Ref<Instant> updated = getComputedReference(UPDATED);
+    public final Ref<String> accountName = getComputedReference(NAME);
+    public final Ref<Boolean> isDisabled = getComputedReference(IS_DISABLED);
+    public final Ref<Boolean> isDomainAdmin = getComputedReference(IS_DOMAIN_ADMIN);
+    public final Ref<Boolean> isSuperAdmin = getComputedReference(IS_SUPER_ADMIN);
+    public final Ref<Boolean> isStrictFromDisabled = getComputedReference(IS_STRICT_FROM_HEADER_DISABLED);
+    public final Ref<String> referenceId = getComputedReference(REFERENCE_ID);
+    public final Ref<Boolean> isRedirectOnly = getComputedReference(IS_REDIRECT_ONLY);
+    public final Ref<List<EMailAddress>> redirectTo = getComputedReference(REDIRECT_TO);
+    public final Ref<Boolean> isDiscard = getComputedReference(IS_DISCARD);
+
+    public EMailAddress getEmailAddress() {
+        return address.assertion("Email Address");
+    }
+
+    public String getUserPart() {
+        return user.orElseGet(getEmailAddress()::getUser);
+    }
+
+    public @Nullable String getDomain() {
+        return domain.get();
+    }
+
+    public @Nullable String getPassword() {
+        return password.get();
+    }
+
+    public @Nullable String getPasswordPlaintext() {
+        return passwordPlaintext.get();
+    }
+
+    public Instant getCreatedTimestamp() {
+        return created.assertion("Creation Timestamp");
+    }
+
+    public @Nullable Instant getLastUpdatedTimestamp() {
+        return updated.get();
+    }
+
+    public @Nullable String getAccountName() {
+        return accountName.get();
+    }
+
+    public boolean isDisabled() {
+        return isDisabled.orElse(false);
+    }
+
+    public boolean isDomainAdmin() {
+        return isDomainAdmin.orElse(false);
+    }
+
+    public boolean isSuperAdmin() {
+        return isSuperAdmin.orElse(false);
+    }
+
+    public boolean isStrictFromDisabled() {
+        return isStrictFromDisabled.orElse(false);
+    }
+
+    public boolean isRedirectOnly() {
+        return isRedirectOnly.orElse(false);
+    }
+
+    public List<EMailAddress> getRedirectTargets() {
+        return redirectTo.orElseGet(Collections::emptyList);
+    }
+
+    public boolean isDiscard() {
+        return isDiscard.orElse(false);
+    }
 
     public Inbox(ContextualProvider context, UniObjectNode initialData) {
         super(context, initialData);
