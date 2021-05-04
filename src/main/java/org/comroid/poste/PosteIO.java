@@ -62,8 +62,8 @@ public final class PosteIO implements ContextualProvider.Underlying {
         return entityCache;
     }
 
-    public PosteIO(ContextualProvider context, String host, String username, String password) {
-        this.context = context.plus("PosteIO Wrapper - " + host, this);
+    public PosteIO(String host, String username, String password) {
+        this.context = CONTEXT.plus("PosteIO Wrapper - " + host, this);
         this.urlPrefix = "https://" + host + "/admin/api/v1";
         this.username = username;
         this.password = password;
