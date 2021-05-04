@@ -152,6 +152,16 @@ public final class PosteIO implements ContextualProvider.Underlying {
         }, 201).thenApply(inbox -> entityCache.autoUpdate(Inbox::new, inbox.asObjectNode()).get());
     }
 
+    public CompletableFuture<Domain> requestDomain(String name) {
+        return request(REST.Method.GET, EndpointScope.DOMAIN_ID, 200, name)
+                .thenApply(data -> entityCache.autoUpdate(Domain::new, data.asObjectNode()).assertion("faulty domain response data"));
+    }
+
+    public CompletableFuture<Inbox> requestInbox(String email) {
+        return request(REST.Method.GET, EndpointScope.MAILBOX_ID, 200, email)
+                .thenApply(data -> entityCache.autoUpdate(Inbox::new, data.asObjectNode()).assertion("faulty inbox response data"));
+    }
+
     @Internal
     public CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, int expectCode, Object... args) {
         return request(method, scope, null, expectCode, args);
