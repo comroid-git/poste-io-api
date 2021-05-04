@@ -5,9 +5,10 @@ import org.comroid.api.WrappedFormattable;
 
 import java.net.URI;
 
-public final class EMailAddress implements WrappedFormattable {
+public final class EMailAddress implements CharSequence, WrappedFormattable {
     private final String user;
     private final String domain;
+    private final String string;
 
     public String getUser() {
         return user;
@@ -38,6 +39,7 @@ public final class EMailAddress implements WrappedFormattable {
     public EMailAddress(String user, String domain) {
         this.user = user;
         this.domain = domain;
+        this.string = user + '@' + domain;
     }
 
     public static EMailAddress parse(String parse) {
@@ -50,7 +52,22 @@ public final class EMailAddress implements WrappedFormattable {
     }
 
     @Override
+    public int length() {
+        return string.length();
+    }
+
+    @Override
+    public char charAt(int index) {
+        return string.charAt(index);
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        return string.subSequence(start, end);
+    }
+
+    @Override
     public String toString() {
-        return user + '@' + domain;
+        return string;
     }
 }
