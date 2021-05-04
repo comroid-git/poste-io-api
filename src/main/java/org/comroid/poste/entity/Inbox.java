@@ -5,6 +5,7 @@ import org.comroid.api.Named;
 import org.comroid.mail.EMailAddress;
 import org.comroid.mutatio.model.Ref;
 import org.comroid.poste.PosteIO;
+import org.comroid.poste.model.InboxUpdater;
 import org.comroid.poste.rest.EndpointScope;
 import org.comroid.restless.REST;
 import org.comroid.uniform.node.UniObjectNode;
@@ -167,5 +168,9 @@ public final class Inbox extends PosteEntity implements Named {
         return requireFromContext(PosteIO.class)
                 .request(REST.Method.DELETE, EndpointScope.MAILBOX_ID, 204, getEmailAddress())
                 .thenApply(nil -> null);
+    }
+
+    public InboxUpdater updater() {
+        return new InboxUpdater(this);
     }
 }

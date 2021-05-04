@@ -58,6 +58,10 @@ public final class PosteIO implements ContextualProvider.Underlying {
         return Base64.encode("Basic " + username + ':' + password);
     }
 
+    public DataContainerCache<String, PosteEntity> getEntityCache() {
+        return entityCache;
+    }
+
     public PosteIO(ContextualProvider context, String host, String username, String password) {
         this.context = context.plus("PosteIO Wrapper - " + host, this);
         this.urlPrefix = "https://" + host + "/admin/api/v1";
@@ -168,7 +172,7 @@ public final class PosteIO implements ContextualProvider.Underlying {
     }
 
     @Internal
-    public CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Consumer<UniObjectNode> bodyBuilder, int expectCode, Object... args) {
+    public <K> CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Consumer<UniObjectNode> bodyBuilder, int expectCode, Object... args) {
         return rest.request()
                 .method(REST.Method.GET)
                 .endpoint(endpointLibrary.getEndpoint(EndpointScope.MAILBOXES), args)
