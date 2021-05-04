@@ -23,7 +23,7 @@ public final class PosteIO implements ContextualProvider.Underlying {
 
     public PosteIO(ContextualProvider context, String host) {
         this.context = context.plus("PosteIO Wrapper - " + host, this);
-        this.urlPrefix = host + "/admin/api/v1";
+        this.urlPrefix = "https://" + host + "/admin/api/v1";
         this.endpointLibrary = new EndpointLibrary(this);
     }
 
