@@ -15,7 +15,7 @@ public final class EndpointLibrary {
         this.poste = poste;
     }
 
-    private AccessibleEndpoint getEndpoint(EndpointScope scope) {
+    public AccessibleEndpoint getEndpoint(EndpointScope scope) {
         return cache.computeIfAbsent(scope, CombinedEndpoint::new);
     }
 

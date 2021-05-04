@@ -1,19 +1,29 @@
 package org.comroid.poste.rest;
 
+import org.comroid.poste.PosteIO;
 import org.intellij.lang.annotations.Language;
 
 public enum EndpointScope {
     // mailbox scopes
-    MAILBOXES("boxes"),
-    MAILBOX_ID("boxes/%s", Constants.EMAIL),
-    MAILBOX_QUOTA("boxes/%s/quota", Constants.EMAIL),
-    MAILBOX_SIEVE("boxes/%s/sieve", Constants.EMAIL),
-    MAILBOX_STATS("boxes/%s/stats", Constants.EMAIL),
+    MAILBOXES("/boxes"),
+    MAILBOX_ID("/boxes/%s", PosteIO.EMAIL_PATTERN),
+    MAILBOX_QUOTA("/boxes/%s/quota", PosteIO.EMAIL_PATTERN),
+    MAILBOX_SIEVE("/boxes/%s/sieve", PosteIO.EMAIL_PATTERN),
+    MAILBOX_STATS("/boxes/%s/stats", PosteIO.EMAIL_PATTERN),
+
+    // domain scopes
+    DOMAINS("/domains"),
+    DOMAIN_ID("/domains/%s", PosteIO.DOMAIN_PATTERN),
+    DOMAIN_DKIM("/domains/%s/dkim", PosteIO.DOMAIN_PATTERN),
+    DOMAIN_STATS("/domains/%s/stats", PosteIO.DOMAIN_PATTERN),
+
+    // email scopes
+    EMAIL_STATUS("/emails/%s/status", ".+?"),
 
     // letsencrypt scopes
-    LETSENCRYPT_ISSUE("le/issue"),
-    LETSENCRYPT_LOG("le/log"),
-    LETSENCRYPT_SETTINGS("le/settings");
+    LETSENCRYPT_ISSUE("/le/issue"),
+    LETSENCRYPT_LOG("/le/log"),
+    LETSENCRYPT_SETTINGS("/le/settings");
 
     private final String extension;
     private final String[] regExp;
@@ -29,9 +39,5 @@ public enum EndpointScope {
 
     public String[] getRegExp() {
         return regExp;
-    }
-
-    private static class Constants {
-        private static final String EMAIL = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
     }
 }
