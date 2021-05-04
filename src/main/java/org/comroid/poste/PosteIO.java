@@ -14,6 +14,7 @@ import org.comroid.uniform.node.UniNode;
 import org.comroid.uniform.node.UniObjectNode;
 import org.comroid.util.Base64;
 import org.comroid.varbind.DataContainerCache;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -150,11 +151,13 @@ public final class PosteIO implements ContextualProvider.Underlying {
         }).thenApply(inbox -> entityCache.autoUpdate(Inbox::new, inbox.asObjectNode()).get());
     }
 
-    private CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Object... args) {
+    @Internal
+    public CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Object... args) {
         return request(method, scope, null, args);
     }
 
-    private CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Consumer<UniObjectNode> bodyBuilder, Object... args) {
+    @Internal
+    public CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Consumer<UniObjectNode> bodyBuilder, Object... args) {
         return rest.request()
                 .method(REST.Method.GET)
                 .endpoint(endpointLibrary.getEndpoint(EndpointScope.MAILBOXES), args)
