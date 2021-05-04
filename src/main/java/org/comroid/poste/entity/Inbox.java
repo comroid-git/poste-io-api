@@ -165,7 +165,7 @@ public final class Inbox extends PosteEntity implements Named {
 
     public CompletableFuture<Void> delete() {
         return requireFromContext(PosteIO.class)
-                .request(REST.Method.DELETE, EndpointScope.MAILBOX_ID, getEmailAddress())
+                .request(REST.Method.DELETE, EndpointScope.MAILBOX_ID, 204, getEmailAddress())
                 .thenApply(nil -> null);
     }
 }

@@ -10,6 +10,7 @@ import org.comroid.poste.rest.EndpointScope;
 import org.comroid.restless.CommonHeaderNames;
 import org.comroid.restless.REST;
 import org.comroid.restless.body.BodyBuilderType;
+import org.comroid.uniform.model.Serializable;
 import org.comroid.uniform.node.UniNode;
 import org.comroid.uniform.node.UniObjectNode;
 import org.comroid.util.Base64;
@@ -68,7 +69,7 @@ public final class PosteIO implements ContextualProvider.Underlying {
     }
 
     public CompletableFuture<List<Domain>> requestDomains() {
-        return request(REST.Method.GET, EndpointScope.DOMAINS, obj -> obj.put("paging", Integer.MAX_VALUE))
+        return request(REST.Method.GET, EndpointScope.DOMAINS, obj -> obj.put("paging", Integer.MAX_VALUE), 200)
                 .thenApply(response -> {
                     assert response.get("last_page").asInt(-1) == response.get("page").asInt(-2) : "too many pages";
 
@@ -82,7 +83,7 @@ public final class PosteIO implements ContextualProvider.Underlying {
     }
 
     public CompletableFuture<List<Inbox>> requestInboxes() {
-        return request(REST.Method.GET, EndpointScope.MAILBOXES, obj -> obj.put("paging", Integer.MAX_VALUE))
+        return request(REST.Method.GET, EndpointScope.MAILBOXES, obj -> obj.put("paging", Integer.MAX_VALUE), 200)
                 .thenApply(response -> {
                     assert response.get("last_page").asInt(-1) == response.get("page").asInt(-2) : "too many pages";
 
@@ -148,21 +149,26 @@ public final class PosteIO implements ContextualProvider.Underlying {
                 obj.put("redirectTo", Arrays.asList(redirectTargets));
             if (referenceId != null)
                 obj.put("referenceId", referenceId);
-        }).thenApply(inbox -> entityCache.autoUpdate(Inbox::new, inbox.asObjectNode()).get());
+        }, 201).thenApply(inbox -> entityCache.autoUpdate(Inbox::new, inbox.asObjectNode()).get());
     }
 
     @Internal
-    public CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Object... args) {
-        return request(method, scope, null, args);
+    public CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, int expectCode, Object... args) {
+        return request(method, scope, null, expectCode, args);
     }
 
     @Internal
-    public CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Consumer<UniObjectNode> bodyBuilder, Object... args) {
+    public CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Consumer<UniObjectNode> bodyBuilder, int expectCode, Object... args) {
         return rest.request()
                 .method(REST.Method.GET)
                 .endpoint(endpointLibrary.getEndpoint(EndpointScope.MAILBOXES), args)
                 .addHeader(CommonHeaderNames.AUTHORIZATION, getAuthorizationHeader())
                 .buildBody(BodyBuilderType.OBJECT, bodyBuilder)
-                .execute$deserializeSingle();
+                .execute()
+                .thenApply(response -> {
+                    if (response.getStatusCode() == expectCode)
+                        return response.getBody().into(Serializable::toUniNode);
+                    throw response.toException();
+                });
     }
 }
