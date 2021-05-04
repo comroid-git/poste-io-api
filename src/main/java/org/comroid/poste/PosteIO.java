@@ -14,7 +14,9 @@ import org.comroid.uniform.node.UniNode;
 import org.comroid.uniform.node.UniObjectNode;
 import org.comroid.util.Base64;
 import org.comroid.varbind.DataContainerCache;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -90,6 +92,62 @@ public final class PosteIO implements ContextualProvider.Underlying {
                             .collect(Collectors.toList());
                     return Collections.unmodifiableList(yields);
                 });
+    }
+
+    public CompletableFuture<Inbox> createInbox(
+            String emailAddress
+    ) {
+        return createInbox(null, emailAddress, null);
+    }
+
+    public CompletableFuture<Inbox> createInbox(
+            @Nullable String name,
+            String emailAddress,
+            @Nullable String passwordPlaintext
+    ) {
+        return createInbox(name, emailAddress, passwordPlaintext, (String[]) null);
+    }
+
+    public CompletableFuture<Inbox> createInbox(
+            @Nullable String name,
+            String emailAddress,
+            @Nullable String passwordPlaintext,
+            @Nullable String... redirectTargets
+    ) {
+        return createInbox(name, emailAddress, passwordPlaintext, false, false, redirectTargets);
+    }
+
+    public CompletableFuture<Inbox> createInbox(
+            @Nullable String name,
+            String emailAddress,
+            @Nullable String passwordPlaintext,
+            boolean disabled,
+            boolean superAdmin,
+            @Nullable String... redirectTargets
+    ) {
+        return createInbox(name, emailAddress, passwordPlaintext, disabled, superAdmin, null, redirectTargets);
+    }
+
+    public CompletableFuture<Inbox> createInbox(
+            @Nullable String name,
+            String emailAddress,
+            @Nullable String passwordPlaintext,
+            boolean disabled,
+            boolean superAdmin,
+            @Nullable String referenceId,
+            @Nullable String... redirectTargets
+    ) {
+        return request(REST.Method.POST, EndpointScope.MAILBOXES, obj -> {
+            if (name != null) obj.put("name", name);
+            obj.put("email", emailAddress);
+            if (passwordPlaintext != null) obj.put("passwordPlaintext", passwordPlaintext);
+            obj.put("disabled", disabled);
+            obj.put("superAdmin", superAdmin);
+            if (redirectTargets != null && redirectTargets.length != 0)
+                obj.put("redirectTo", Arrays.asList(redirectTargets));
+            if (referenceId != null)
+                obj.put("referenceId", referenceId);
+        }).thenApply(inbox -> entityCache.autoUpdate(Inbox::new, inbox.asObjectNode()).get());
     }
 
     private CompletableFuture<UniNode> request(REST.Method method, EndpointScope scope, Object... args) {
