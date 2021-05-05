@@ -2,7 +2,7 @@ package org.comroid.poste.entity;
 
 import org.comroid.api.ContextualProvider;
 import org.comroid.api.Named;
-import org.comroid.mail.EMailAddress;
+import org.comroid.api.EMailAddress;
 import org.comroid.mutatio.model.Ref;
 import org.comroid.uniform.node.UniObjectNode;
 import org.comroid.util.StandardValueType;
