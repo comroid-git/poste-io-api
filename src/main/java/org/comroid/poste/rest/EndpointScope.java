@@ -28,16 +28,16 @@ public enum EndpointScope {
     private final String extension;
     private final String[] regExp;
 
-    EndpointScope(String extension, @Language("RegExp") String... regExp) {
-        this.extension = extension;
-        this.regExp = regExp;
-    }
-
     public String getExtension() {
         return extension;
     }
 
     public String[] getRegExp() {
         return regExp;
+    }
+
+    EndpointScope(String extension, @Language("RegExp") String... regExp) {
+        this.extension = extension;
+        this.regExp = regExp;
     }
 }

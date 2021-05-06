@@ -1,8 +1,8 @@
 package org.comroid.poste.entity;
 
 import org.comroid.api.ContextualProvider;
-import org.comroid.api.Named;
 import org.comroid.api.EMailAddress;
+import org.comroid.api.Named;
 import org.comroid.mutatio.model.Ref;
 import org.comroid.poste.PosteIO;
 import org.comroid.poste.model.InboxUpdater;
